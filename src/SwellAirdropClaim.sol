@@ -35,4 +35,8 @@ contract SwellAirdropClaim {
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(addr, index, amount))));
         require(MerkleProof.verify(proof, merkleRoot, leaf), "Invalid proof");
     }
+
+    function setMerkleRoot(bytes32 _merkleRoot) external {
+        merkleRoot = _merkleRoot;
+    }
 }
