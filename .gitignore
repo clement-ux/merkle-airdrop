@@ -9,6 +9,14 @@ out/
 
 # Docs
 docs/
+.DS_Store
 
 # Dotenv file
 .env
+
+# Node
+package-lock.json
+node_modules
+
+# Merkle Tree
+tree.json
