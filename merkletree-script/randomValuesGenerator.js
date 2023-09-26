@@ -34,6 +34,8 @@ function generateRandomData(numTimes) {
     // Add some hardcoded values at random places
     dataArray[getRandomInt(numTimes - 1)][0] = "0x328809Bc894f92807417D2dAD6b7C998c1aFdac6"; // makeAddr("alice")
     dataArray[getRandomInt(numTimes - 1)][0] = "0x1D96F2f6BeF1202E4Ce1Ff6Dad0c2CB002861d3e"; // makeAddr("bob")
+    dataArray[getRandomInt(numTimes - 1)][0] = "0xA4d4c1f8a763Ef6a0140D04291eCEef913Ffc272"; // makeAddr("carol")
+    dataArray[getRandomInt(numTimes - 1)][0] = "0x7E09429585169ABA1759346eb6b94C91f3C7203b"; // makeAddr("dave")
 
     return dataArray;
 }

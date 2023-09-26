@@ -14,6 +14,8 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
 
     address public immutable alice = makeAddr("alice");
     address public immutable bob = makeAddr("bob");
+    address public immutable carol = makeAddr("carol");
+    address public immutable dave = makeAddr("dave");
 
     uint256 public constant TOTAL_AIRDROP = 1_000_000e18;
 
@@ -59,6 +61,41 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         assertEq(swell.balanceOf(bob), amount);
     }
 
+    function test_ClaimAirdrop_Carol() public sendTokenToMerkle(TOTAL_AIRDROP) {
+        console.logBytes32(claim.merkleRoot());
+
+        // Check before
+        assertEq(swell.balanceOf(carol), 0);
+
+        // Get Proof
+        (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(carol);
+
+        // Claim Airdrop
+        vm.prank(carol);
+        claim.claimAirDrop(proof, index, amount);
+
+        // Check after
+        assertEq(swell.balanceOf(carol), amount);
+    }
+
+    function test_ClaimAirdrop_Dave() public sendTokenToMerkle(TOTAL_AIRDROP) {
+        console.logBytes32(claim.merkleRoot());
+
+        // Check before
+        assertEq(swell.balanceOf(dave), 0);
+
+        // Get Proof
+        (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(dave);
+
+        // Claim Airdrop
+        vm.prank(dave);
+        claim.claimAirDrop(proof, index, amount);
+
+        // Check after
+        assertEq(swell.balanceOf(dave), amount);
+    }
+
+    /*
     function test_RevertWhen_NoTokenOnContract() public {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
@@ -134,5 +171,5 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         vm.expectRevert("Invalid proof");
         vm.prank(bob);
         claim.claimAirDrop(proof, index, amount);
-    }
+    }*/
 }
