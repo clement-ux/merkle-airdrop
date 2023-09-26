@@ -13,8 +13,6 @@ import {MerkleTreeHelper} from "test/MerkleTreeHelper.sol";
 contract SwellAirdropClaimTest is MerkleTreeHelper {
     MockERC20 public swell = new MockERC20("Swell DAO token", "SWELL", 18);
     SwellAirdropClaim public claim = new SwellAirdropClaim(0x0, address(swell));
-    SwellAirdropClaimSolady public claimSolady = new SwellAirdropClaimSolady(0x0, address(swell));
-    SwellAirdropClaimSolmate public claimSolmate = new SwellAirdropClaimSolmate(0x0, address(swell));
 
     address public immutable alice = makeAddr("alice");
     address public immutable bob = makeAddr("bob");
@@ -23,11 +21,11 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
 
     uint256 public constant TOTAL_AIRDROP = 1_000_000e18;
 
-    function setUp() public {
-        bytes32 root = getRoot();
+    bytes32 public root;
+
+    function setUp() public virtual {
+        root = getRoot();
         claim.setMerkleRoot(root);
-        claimSolady.setMerkleRoot(root);
-        claimSolmate.setMerkleRoot(root);
     }
 
     modifier sendTokenToMerkle(uint256 _amount) {

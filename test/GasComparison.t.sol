@@ -1,7 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 import "test/SwellAirdropClaim.t.sol";
 
+import {SwellAirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
+import {SwellAirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
+
 contract GasComparison is SwellAirdropClaimTest {
+    SwellAirdropClaimSolady public claimSolady = new SwellAirdropClaimSolady(0x0, address(swell));
+    SwellAirdropClaimSolmate public claimSolmate = new SwellAirdropClaimSolmate(0x0, address(swell));
+
+    function setUp() public override {
+        super.setUp();
+        claimSolady.setMerkleRoot(root);
+        claimSolmate.setMerkleRoot(root);
+    }
+
     function test_GasComparison() public {
         swell.mint(address(claim), TOTAL_AIRDROP);
         swell.mint(address(claimSolady), TOTAL_AIRDROP);
