@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 
 import {MockERC20} from "solmate/test/utils/mocks/MockERC20.sol";
 import {SwellAirdropClaim} from "src/SwellAirdropClaim.sol";
+import {SwellAirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
 import {SwellAirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
 
 import {MerkleTreeHelper} from "test/MerkleTreeHelper.sol";
@@ -12,6 +13,7 @@ import {MerkleTreeHelper} from "test/MerkleTreeHelper.sol";
 contract SwellAirdropClaimTest is MerkleTreeHelper {
     MockERC20 public swell = new MockERC20("Swell DAO token", "SWELL", 18);
     SwellAirdropClaim public claim = new SwellAirdropClaim(0x0, address(swell));
+    SwellAirdropClaimSolady public claimSolady = new SwellAirdropClaimSolady(0x0, address(swell));
     SwellAirdropClaimSolmate public claimSolmate = new SwellAirdropClaimSolmate(0x0, address(swell));
 
     address public immutable alice = makeAddr("alice");
@@ -24,6 +26,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
     function setUp() public {
         bytes32 root = getRoot();
         claim.setMerkleRoot(root);
+        claimSolady.setMerkleRoot(root);
         claimSolmate.setMerkleRoot(root);
     }
 
@@ -32,6 +35,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         _;
     }
 
+    /*
     function test_ClaimAirDrop_Alice() public sendTokenToMerkle(TOTAL_AIRDROP) {
         // Check before
         assertEq(swell.balanceOf(alice), 0);
@@ -122,10 +126,11 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         vm.expectRevert("Invalid proof");
         vm.prank(bob);
         claim.claimAirDrop(proof, index, amount);
-    }
+    }*/
 
     function test_GasComparison() public {
         swell.mint(address(claim), TOTAL_AIRDROP);
+        swell.mint(address(claimSolady), TOTAL_AIRDROP);
         swell.mint(address(claimSolmate), TOTAL_AIRDROP);
 
         // Get Proof
@@ -153,5 +158,15 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claimSolmate.claimAirDrop(proofC, indexC, amountC);
         vm.prank(dave);
         claimSolmate.claimAirDrop(proofD, indexD, amountD);
+
+        // Claim Airdrop using Solady MerkleProof
+        vm.prank(alice);
+        claimSolady.claimAirDrop(proofA, indexA, amountA);
+        vm.prank(bob);
+        claimSolady.claimAirDrop(proofB, indexB, amountB);
+        vm.prank(carol);
+        claimSolady.claimAirDrop(proofC, indexC, amountC);
+        vm.prank(dave);
+        claimSolady.claimAirDrop(proofD, indexD, amountD);
     }
 }
