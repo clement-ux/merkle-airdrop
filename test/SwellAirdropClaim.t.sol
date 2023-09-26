@@ -17,9 +17,8 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
 
     uint256 public constant TOTAL_AIRDROP = 1_000_000e18;
 
-    modifier setMerkelRoot() {
+    function setUp() public {
         claim.setMerkleRoot(getRoot());
-        _;
     }
 
     modifier sendTokenToMerkle(uint256 _amount) {
@@ -27,7 +26,8 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         _;
     }
 
-    function test_ClaimAirDrop_Alice() public setMerkelRoot sendTokenToMerkle(TOTAL_AIRDROP) {
+    function test_ClaimAirDrop_Alice() public sendTokenToMerkle(TOTAL_AIRDROP) {
+        console.logBytes32(claim.merkleRoot());
         // Check before
         assertEq(swell.balanceOf(alice), 0);
 
@@ -42,7 +42,9 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         assertEq(swell.balanceOf(alice), amount);
     }
 
-    function test_ClaimAirdrop_Bob() public setMerkelRoot sendTokenToMerkle(TOTAL_AIRDROP) {
+    function test_ClaimAirdrop_Bob() public sendTokenToMerkle(TOTAL_AIRDROP) {
+        console.logBytes32(claim.merkleRoot());
+
         // Check before
         assertEq(swell.balanceOf(bob), 0);
 
@@ -57,7 +59,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         assertEq(swell.balanceOf(bob), amount);
     }
 
-    function test_RevertWhen_NoTokenOnContract() public setMerkelRoot {
+    function test_RevertWhen_NoTokenOnContract() public {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
 
@@ -66,7 +68,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claim.claimAirDrop(proof, index, amount);
     }
 
-    function test_RevertWhen_AlreadyClaimed() public setMerkelRoot sendTokenToMerkle(TOTAL_AIRDROP) {
+    function test_RevertWhen_AlreadyClaimed() public sendTokenToMerkle(TOTAL_AIRDROP) {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
 
@@ -80,7 +82,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claim.claimAirDrop(proof, index, amount);
     }
 
-    function test_RevertWhen_ProofIsInvalid() public setMerkelRoot {
+    function test_RevertWhen_ProofIsInvalid() public {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
         // Modify proof
@@ -92,7 +94,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claim.claimAirDrop(proof, index, amount);
     }
 
-    function test_RevertWhen_AmountIsInvalid() public setMerkelRoot {
+    function test_RevertWhen_AmountIsInvalid() public {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
         // Modify amount
@@ -112,7 +114,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claim.claimAirDrop(proof, index, amount);
     }
 
-    function test_RevertWhen_IndexIsInvalid() public setMerkelRoot {
+    function test_RevertWhen_IndexIsInvalid() public {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
         // Modify index
@@ -124,7 +126,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claim.claimAirDrop(proof, index, amount);
     }
 
-    function test_RevertWhen_WrongCaller() public setMerkelRoot sendTokenToMerkle(TOTAL_AIRDROP) {
+    function test_RevertWhen_WrongCaller() public sendTokenToMerkle(TOTAL_AIRDROP) {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
 
