@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import {MockERC20} from "solmate/test/utils/mocks/MockERC20.sol";
 import {SwellAirdropClaim} from "src/SwellAirdropClaim.sol";
 
-import {MerkleTreeHelper} from "test/getProof.sol";
+import {MerkleTreeHelper} from "test/MerkleTreeHelper.sol";
 
 contract SwellAirdropClaimTest is MerkleTreeHelper {
     MockERC20 public swell = new MockERC20("Swell DAO token", "SWELL", 18);
