@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 
-contract GetProof is Test {
+contract MerkleTreeHelper is Test {
     function getProof(address user) public returns (uint256, uint256, bytes32[] memory) {
         //returns(bytes32) {
         string[] memory inputs = new string[](3);
