@@ -42,6 +42,21 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         assertEq(swell.balanceOf(alice), amount);
     }
 
+    function test_ClaimAirdrop_Bob() public setMerkelRoot sendTokenToMerkle(TOTAL_AIRDROP) {
+        // Check before
+        assertEq(swell.balanceOf(bob), 0);
+
+        // Get Proof
+        (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(bob);
+
+        // Claim Airdrop
+        vm.prank(bob);
+        claim.claimAirDrop(proof, index, amount);
+
+        // Check after
+        assertEq(swell.balanceOf(bob), amount);
+    }
+
     function test_RevertWhen_NoTokenOnContract() public setMerkelRoot {
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
