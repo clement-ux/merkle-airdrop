@@ -6,7 +6,7 @@ ffi = true
 
 remappings = ["openzeppelin-contracts/=lib/openzeppelin-contracts/contracts"]
 
-gas_reports = ["SwellAirdropClaim"]
+gas_reports = ["SwellAirdropClaim", "SwellAirdropClaimSolmate"]
 
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
