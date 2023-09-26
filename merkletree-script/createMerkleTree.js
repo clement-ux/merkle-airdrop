@@ -1,5 +1,7 @@
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 import fs from "fs";
+import { ethers } from "ethers";
+
 
 // (1)
 const values = [
@@ -17,7 +19,12 @@ const values = [
 const tree = StandardMerkleTree.of(values, ["address", "uint256", "uint256"]);
 
 // (3)
-console.log("Merkle Root:", tree.root);
+const abi = new ethers.AbiCoder();
+const root = abi.encode(
+  ["bytes32"],
+  [tree.root]
+);
+console.log(root);
 
 // (4)
 fs.writeFileSync("tree.json", JSON.stringify(tree.dump()));
