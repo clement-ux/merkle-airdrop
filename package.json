@@ -1,7 +1,9 @@
 {
   "type": "module",
   "dependencies": {
-    "@openzeppelin/merkle-tree": "^1.0.5"
+    "@openzeppelin/merkle-tree": "^1.0.5",
+    "ethers": "^6.7.1",
+    "web3-eth-abi": "^4.1.2"
   },
   "name": "merkle-airdrop",
   "version": "1.0.0",
