@@ -4,15 +4,15 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 
 import {MockERC20} from "solmate/test/utils/mocks/MockERC20.sol";
-import {SwellAirdropClaim} from "src/SwellAirdropClaim.sol";
-import {SwellAirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
-import {SwellAirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
+import {AirdropClaim} from "src/SwellAirdropClaim.sol";
+import {AirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
+import {AirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
 
 import {MerkleTreeHelper} from "test/MerkleTreeHelper.sol";
 
-contract SwellAirdropClaimTest is MerkleTreeHelper {
-    MockERC20 public swell = new MockERC20("Swell DAO token", "SWELL", 18);
-    SwellAirdropClaim public claim = new SwellAirdropClaim(0x0, address(swell));
+contract AirdropClaimTest is MerkleTreeHelper {
+    MockERC20 public token = new MockERC20("Token", "TKN", 18);
+    AirdropClaim public claim = new AirdropClaim(0x0, address(token));
 
     address public immutable alice = makeAddr("alice");
     address public immutable bob = makeAddr("bob");
@@ -29,13 +29,13 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
     }
 
     modifier sendTokenToMerkle(uint256 _amount) {
-        swell.mint(address(claim), _amount);
+        token.mint(address(claim), _amount);
         _;
     }
 
     function test_ClaimAirDrop_Alice() public sendTokenToMerkle(TOTAL_AIRDROP) {
         // Check before
-        assertEq(swell.balanceOf(alice), 0);
+        assertEq(token.balanceOf(alice), 0);
 
         // Get Proof
         (uint256 index, uint256 amount, bytes32[] memory proof) = getProof(alice);
@@ -45,7 +45,7 @@ contract SwellAirdropClaimTest is MerkleTreeHelper {
         claim.claimAirDrop(proof, index, amount);
 
         // Check after
-        assertEq(swell.balanceOf(alice), amount);
+        assertEq(token.balanceOf(alice), amount);
     }
 
     function test_RevertWhen_NoTokenOnContract() public {

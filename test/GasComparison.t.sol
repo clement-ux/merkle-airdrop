@@ -3,12 +3,12 @@ pragma solidity 0.8.20;
 
 import "test/SwellAirdropClaim.t.sol";
 
-import {SwellAirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
-import {SwellAirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
+import {AirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
+import {AirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
 
-contract GasComparison is SwellAirdropClaimTest {
-    SwellAirdropClaimSolady public claimSolady = new SwellAirdropClaimSolady(0x0, address(swell));
-    SwellAirdropClaimSolmate public claimSolmate = new SwellAirdropClaimSolmate(0x0, address(swell));
+contract GasComparison is AirdropClaimTest {
+    AirdropClaimSolady public claimSolady = new AirdropClaimSolady(0x0, address(token));
+    AirdropClaimSolmate public claimSolmate = new AirdropClaimSolmate(0x0, address(token));
 
     function setUp() public override {
         super.setUp();
@@ -17,9 +17,9 @@ contract GasComparison is SwellAirdropClaimTest {
     }
 
     function test_GasComparison() public {
-        swell.mint(address(claim), TOTAL_AIRDROP);
-        swell.mint(address(claimSolady), TOTAL_AIRDROP);
-        swell.mint(address(claimSolmate), TOTAL_AIRDROP);
+        token.mint(address(claim), TOTAL_AIRDROP);
+        token.mint(address(claimSolady), TOTAL_AIRDROP);
+        token.mint(address(claimSolmate), TOTAL_AIRDROP);
 
         // Get Proof
         (uint256 indexA, uint256 amountA, bytes32[] memory proofA) = getProof(alice);

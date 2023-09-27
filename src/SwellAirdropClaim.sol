@@ -6,7 +6,7 @@ import {ERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import {BitMaps} from "openzeppelin-contracts/utils/structs/BitMaps.sol";
 import {MerkleProof} from "openzeppelin-contracts/utils/cryptography/MerkleProof.sol";
 
-contract SwellAirdropClaim {
+contract AirdropClaim {
     ERC20 public immutable token;
 
     bytes32 public merkleRoot;
