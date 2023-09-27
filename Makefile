@@ -13,8 +13,6 @@ install:
 	forge install
 
 # Tests
-test:
-	@forge test
 
 test-f-%:
 	@FOUNDRY_MATCH_TEST=$* make test

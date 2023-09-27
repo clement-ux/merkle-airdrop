@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/SwellAirdropClaim.t.sol";
+import "./Base.t.sol";
 
-import {AirdropClaimSolady} from "src/SwellAirdropClaimSolady.sol";
-import {AirdropClaimSolmate} from "src/SwellAirdropClaimSolmate.sol";
+contract GasComparison is BaseTest {
+    bytes32 public root;
 
-contract GasComparison is AirdropClaimTest {
-    AirdropClaimSolady public claimSolady = new AirdropClaimSolady(0x0, address(token));
-    AirdropClaimSolmate public claimSolmate = new AirdropClaimSolmate(0x0, address(token));
+    function setUp() public {
+        claim = new AirdropClaim(0x0, address(token));
+        claimSolady = new AirdropClaimSolady(0x0, address(token));
+        claimSolmate = new AirdropClaimSolmate(0x0, address(token));
 
-    function setUp() public override {
-        super.setUp();
+        root = getRoot();
+        claim.setMerkleRoot(root);
         claimSolady.setMerkleRoot(root);
         claimSolmate.setMerkleRoot(root);
     }
