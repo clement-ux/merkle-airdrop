@@ -33,7 +33,7 @@ contract AirdropClaimSolady {
 
     function _verifyProof(bytes32[] calldata proof, uint256 index, uint256 amount, address addr) private view {
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(addr, index, amount))));
-        require(MerkleProofLib.verify(proof, merkleRoot, leaf), "Invalid proof");
+        require(MerkleProofLib.verifyCalldata(proof, merkleRoot, leaf), "Invalid proof");
     }
 
     function setMerkleRoot(bytes32 _merkleRoot) external {
