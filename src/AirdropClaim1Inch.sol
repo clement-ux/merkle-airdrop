@@ -1,70 +1,43 @@
-// SPDX-License-Identifier: MIT
-
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
 import {ERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
+import {BitMaps} from "openzeppelin-contracts/utils/structs/BitMaps.sol";
+import {MerkleProofLib} from "solady/src/utils/MerkleProofLib.sol";
 
 contract AirdropClaim1Inch {
-    // using MerkleProof for bytes32[];
-
-    // solhint-disable-next-line immutable-vars-naming
-    address public immutable token;
+    ERC20 public immutable token;
 
     bytes32 public merkleRoot;
-    mapping(address => uint256) public cumulativeClaimed;
+    BitMaps.BitMap private _airdropList;
 
-    event MerkelRootUpdated(bytes32 oldMerkleRoot, bytes32 newMerkleRoot);
-    // This event is triggered whenever a call to #claim succeeds.
-    event Claimed(address indexed account, uint256 amount);
-
-    error InvalidProof();
-    error NothingToClaim();
-    error MerkleRootWasUpdated();
-
-    constructor(address token_) {
-        token = token_;
+    constructor(bytes32 _merkleRoot, address _token) {
+        merkleRoot = _merkleRoot;
+        token = ERC20(_token);
     }
 
-    function setMerkleRoot(bytes32 merkleRoot_) external {
-        emit MerkelRootUpdated(merkleRoot, merkleRoot_);
-        merkleRoot = merkleRoot_;
+    function claimAirDrop(bytes32[] calldata proof, uint256 index, uint256 amount) external {
+        // check if already claimed
+        require(!BitMaps.get(_airdropList, index), "Already claimed");
+
+        // verify proof
+        _verifyProof(proof, index, amount, msg.sender);
+
+        // set airdrop as claimed
+        BitMaps.setTo(_airdropList, index, true);
+
+        // transfer tokens
+        token.transfer(msg.sender, amount);
     }
 
-
-    function claim(
-        address account,
-        uint256 cumulativeAmount,
-        bytes32 expectedMerkleRoot,
-        bytes32[] calldata merkleProof,
-        uint256 index
-    ) external {
-        if (merkleRoot != expectedMerkleRoot) revert MerkleRootWasUpdated();
-
-        // Verify the merkle proof
-        
-        // Slightly modified, to have the same encoding as the others.
-        // Original:
-        // bytes32 leaf = keccak256(abi.encodePacked(account, cumulativeAmount));
-        // Modified:
-        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(account, index, cumulativeAmount))));
-        if (!_verifyAsm(merkleProof, expectedMerkleRoot, leaf)) revert InvalidProof();
-
-        // Mark it claimed
-        uint256 preclaimed = cumulativeClaimed[account];
-        if (preclaimed >= cumulativeAmount) revert NothingToClaim();
-        cumulativeClaimed[account] = cumulativeAmount;
-
-        // Send the token
-        unchecked {
-            uint256 amount = cumulativeAmount - preclaimed;
-            ERC20(token).transfer(account, amount);
-            emit Claimed(account, amount);
-        }
+    function _verifyProof(bytes32[] calldata proof, uint256 index, uint256 amount, address addr) private view {
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(addr, index, amount))));
+        require(_verifyAsm(proof, merkleRoot, leaf), "Invalid proof");
     }
 
-    // function verify(bytes32[] calldata merkleProof, bytes32 root, bytes32 leaf) public pure returns (bool) {
-    //     return merkleProof.verify(root, leaf);
-    // }
+    function setMerkleRoot(bytes32 _merkleRoot) external {
+        merkleRoot = _merkleRoot;
+    }
 
     function _verifyAsm(bytes32[] calldata proof, bytes32 root, bytes32 leaf) private pure returns (bool valid) {
         /// @solidity memory-safe-assembly
